@@ -1,0 +1,127 @@
+# プロジェクト進捗：仮想住民シミュレーション
+
+## 全体目標
+
+LLM が自律的に行動する仮想住民が相互作用し、環境や社会システムと関わりながら生活するシミュレーションを完成させる。エージェントの行動、状態変化、経済活動、社会関係などを可視化し、ユーザーがシミュレーションの進行を理解・介入できるインタラクティブなシステムを構築する。
+
+## 現在のフェーズと進捗
+
+### フェーズ 1：LLM 単一エージェント呼び出し
+
+- **完了**: LLM との基本的な連携、エージェントの行動生成の基盤が確立済み。
+
+### フェーズ 2：複数エージェントの導入と相互作用
+
+- **完了**: 複数エージェントの管理、ステップ実行、エージェント間のメッセージ送信機能が実装済み。
+
+### フェーズ 3：環境との相互作用と状態変化
+
+- **進捗あり**:
+  - エージェントの状態に `happiness` (幸福度) と `hunger` (空腹度) を追加し、`Agent.ts` と `src/types/index.ts` を更新済み。
+  - LLM からの応答にこれらの状態を含めるよう `src/services/llm.ts` を更新済み。
+  - `src/App.tsx` でエージェントの初期化と LLM 応答からの状態更新ロジックを実装済み。
+
+### フェーズ 4：記憶と学習
+
+- **基盤あり**: `MemoryManager` が存在し、記憶の追加と要約機能の基盤は実装済み。
+
+### フェーズ 5：目標と計画の立案
+
+- **進捗あり**:
+  - エージェントが短期計画を持つためのプロンプト基盤が `Agent.ts` に存在。
+  - LLM からの `plan` 応答をエージェントの状態に反映するロジックが `App.tsx` に存在。
+  - `src/services/llm.ts` が `plan` を含む `ActionResponse` を返すよう更新済み。
+
+### フェーズ 6：経済システムの導入
+
+- **進捗あり**:
+  - `CostOptimizer` の役割を拡大し、エージェントの給与支払い (`paySalary`) と購入処理 (`handlePurchase`) メソッドを実装済み。
+  - `src/App.tsx` でこれらの経済関連メソッドを使用するよう更新済み。
+
+### フェーズ 7：社会システムの導入とルールの適用
+
+- **進捗あり**:
+  - `RuleEngine` に夜間の騒音禁止ルールを追加済み。
+  - `DecisionManager` が `RuleEngine` を使用し、`currentStep` を渡すよう更新済み。
+  - エージェント間の関係性 (`relationships`) の基盤は `Agent.ts` に存在し、メッセージ送信時に更新される。
+
+### フェーズ 8：シミュレーションの長期運用と可視化
+
+- **可視化の方向性決定**: 3D 可視化から D3.js を用いた 2D マップ形式の可視化へ方針転換済み。
+- **可視化の初期対応**: `AgentVisualization.tsx` は現在、3D シーンの代わりに「3D シミュレーションは現在無効です。」というテキストを表示するよう変更済み。
+
+## 最近の進捗 (2025 年 7 月 25 日)
+
+### UI/UX の改善
+
+- サイドバー形式のレイアウトを導入し、UI 要素の配置を改善 (`src/App.tsx`)。
+- サイドバー内の各セクションを折りたたみ可能にする `CollapsibleSection` コンポーネントを新規作成し、適用 (`src/components/CollapsibleSection.tsx`, `src/App.tsx`)。
+- `ControlPanel.tsx` のレイアウトを調整し、ボタンの配置とテキスト表示を改善。
+- LLM 使用状況グラフを非表示化 (`src/App.tsx`)。
+  - ### エージェント表示の改善 │
+    │ 53 - - エージェントアイコンの頭上の短期計画表示を非表示化 (`src/components/AgentVisualization.tsx`)。 │
+    │ 54 - - エージェントアイコンのステータステキスト（エネルギー、幸福度、空腹度）を日本語化 (`src/components/AgentVisualization.tsx`)。 │
+    │ 55 - - エージェント詳細パネルに空腹ゲージを追加 (`src/components/AgentDetails.tsx`)。 │
+    │ 56 - │
+    │ 57 - ### ゾンビシミュレーションのプロトタイプ実装 (進行中) │
+    │ 58 - - `Zombie` インターフェースを定義 (`src/types/index.ts`)。 │
+    │ 59 - - `App.tsx` にゾンビの状態管理を追加。 │
+    │ 60 - - マップ外からのゾンビ出現ロジックを実装 (`src/App.tsx`)。 │
+    │ 61 - - `AgentVisualization.tsx` にゾンビの描画ロジックを追加。 │
+    │ 62 - - ゾンビが最も近いエージェントまたは拠点に向かって移動するロジックを実装 (`src/App.tsx`)。 │
+    │ 63 - - ゾンビとエージェント、ゾンビと拠点の衝突判定とダメージ処理を実装 (`src/App.tsx`)。 │
+    │ 64 - - エージェントに武器を持たせる機能を追加 (`src/types/index.ts`, `src/models/Agent.ts`, `src/App.tsx`)。 │
+    │ 65 - - 武器の視覚化を実装 (`src/components/AgentVisualization.tsx`)。 │
+    │ 66 - - エージェントの連続的な移動を実装 (`src/models/Agent.ts`, `src/App.tsx`)。 │
+    │ 67 - - 拠点の体力と破壊を実装 (`src/types/index.ts`, `src/App.tsx`)。 │
+    │ 68 - - エージェントの死亡と除去の最終化を実装 (`src/App.tsx`)。 │
+    │ 69 - - ゲームオーバー条件の追加を実装 (`src/App.tsx`)。 │
+    │ 70 - - 物資調達システムの実装 (金銭による購入ロジックをコメントアウト) (`src/App.tsx`, `src/models/Agent.ts`)。 │
+    │ 71 - │
+    │ 72 - ### マップと場所の改善 │
+    │ 73 - - `NamedLocation` インターフェースに `type`, `width`, `height`, `resources` プロパティを追加 (`src/types/index.ts`)。 │
+    │ 74 - - `LOCATIONS` 定義を更新し、新しい場所タイプとプロパティを追加、不要な「職場」を削除 (`src/App.tsx`)。 │
+    │ 75 - - `AgentVisualization.tsx` で場所の描画に `width` と `height` を使用し、タイプに応じた色分けを実装。 │
+    │ 76 - - エージェントが建物内に適切に表示されるよう、位置調整ロジックを改善 (`src/components/AgentVisualization.tsx`)。 │
+    │ 77 - - マップの拡大・縮小（ズーム）と移動（パン）機能を実装 (`src/components/AgentVisualization.tsx`)。 │
+    │ 78 - │
+    │ 79 - ### LLM プロンプトの調整 │
+    │ 80 - - `Agent.ts` の `generatePrompt` メソッドにおいて、LLM が「plan」と「action」を必ず日本語で記述するよう指示を強化し、「mood」の選択肢を日本語に修正。 │
+    │ 81 - - `Agent.ts` の `generatePrompt` メソッドに、周囲のゾンビの存在や距離に関する情報を追加し、行動指針の調整を実施。 │
+    │ 82 - - `Agent.ts` の `generatePrompt` メソッドにおいて、エージェントの空腹度やエネルギーが低い場合に、物資調達や回復行動を優先するように促す指示をさらに明確化。
+
+### ゾンビシミュレーションのプロトタイプ実装 (進行中)
+
+- `Zombie` インターフェースを定義 (`src/types/index.ts`)。
+- `App.tsx` にゾンビの状態管理を追加。
+- マップ外からのゾンビ出現ロジックを実装 (`src/App.tsx`)。
+- `AgentVisualization.tsx` にゾンビの描画ロジックを追加。
+- ゾンビが最も近いエージェントまたは拠点に向かって移動するロジックを実装 (`src/App.tsx`)。
+- ゾンビとエージェント、ゾンビと拠点の衝突判定とダメージ処理を実装 (`src/App.tsx`)。
+- エージェントに武器を持たせる機能を追加 (`src/types/index.ts`, `src/models/Agent.ts`, `src/App.tsx`)。
+- 武器の視覚化を実装 (`src/components/AgentVisualization.tsx`)。
+- エージェントの連続的な移動を実装 (`src/models/Agent.ts`, `src/App.tsx`)。
+- 拠点の体力と破壊を実装 (`src/types/index.ts`, `src/App.tsx`)。
+- エージェントの死亡と除去の最終化を実装 (`src/App.tsx`)。
+- ゲームオーバー条件の追加を実装 (`src/App.tsx`)。
+- 物資調達システムの実装 (金銭による購入ロジックをコメントアウト) (`src/App.tsx`, `src/models/Agent.ts`)。
+
+### マップと場所の改善
+
+- `NamedLocation` インターフェースに `type`, `width`, `height`, `resources` プロパティを追加 (`src/types/index.ts`)。
+- `LOCATIONS` 定義を更新し、新しい場所タイプとプロパティを追加、不要な「職場」を削除 (`src/App.tsx`)。
+- `AgentVisualization.tsx` で場所の描画に `width` と `height` を使用し、タイプに応じた色分けを実装。
+- エージェントが建物内に適切に表示されるよう、位置調整ロジックを改善 (`src/components/AgentVisualization.tsx`)。
+- マップの拡大・縮小（ズーム）と移動（パン）機能を実装 (`src/components/AgentVisualization.tsx`)。
+
+### LLM プロンプトの調整
+
+- `Agent.ts` の `generatePrompt` メソッドにおいて、LLM が「plan」と「action」を必ず日本語で記述するよう指示を強化し、「mood」の選択肢を日本語に修正。
+- `Agent.ts` の `generatePrompt` メソッドに、周囲のゾンビの存在や距離に関する情報を追加し、行動指針の調整を実施。
+- `Agent.ts` の `generatePrompt` メソッドにおいて、エージェントの空腹度やエネルギーが低い場合に、物資調達や回復行動を優先するように促す指示をさらに明確化。
+
+## プロトタイプとして機能するまでに残っていること
+
+1.  **LLM プロンプトのゾンビシミュレーションへの調整 (最終化):** エージェントがゾンビの脅威を認識し、それに応じた行動（逃走、戦闘、物資調達の優先など）を取るように、LLM へのプロンプトをさらに調整します。
+2.  **マップの視覚的改善 (詳細化):** 日本の都市をモデルにしたマップの具体的なデザイン検討と実装。スーパーや雑貨屋など、各場所の視覚的な特徴をより明確にする。
+3.  **他生存者とのインタラクション:** 友好的、中立、敵対的な生存者との物資のやり取りや戦闘などのインタラクションを実装します。

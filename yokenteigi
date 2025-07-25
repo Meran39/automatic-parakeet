@@ -1,0 +1,150 @@
+要件定義書 (MVP→長期運用まで)
+
+1. 目的・ターゲット規模
+
+目的: LLM完全委譲による創造性豊かな仮想住民シミュレーションを、小規模(20–50体)で実装し、長期運用(週次/月次ステップ)も可能なアーキテクチャを検証する。
+
+ターゲット規模: 初期20体→最終50体までスケール可能。
+
+2. 必須機能整理 (MVP 範囲)
+
+エージェント生成: ID+初期記憶／性格タグを持つAgentオブジェクト
+
+行動決定 (LLM): API呼び出しで1ステップの行動を生成
+
+メモリ更新: 過去行動をメモリに蓄積し、次ステップで参照
+
+シミュレーションループ: CronまたはIntervalで定期実行
+
+簡易可視化: Canvas/SVGまたはReactでAgent位置・行動を一覧表示
+
+3. 無料枠リスク見積もり
+
+APIリクエスト数: 50体×1ステップ×30ステップ/月 = 1,500リクエスト/月
+
+Hugging Face Inference 無料枠: 数千リクエスト/月 → 安全圏
+
+Cloudflare Workers: 100Kリクエスト/日  → 十分余裕
+
+Workers KV: 1GBストレージ → JSON状態(50体×数KB)なら数万体分余裕
+
+4. 技術選定
+
+層言語/ツール理由エージェント管理Node.js + TypeScript★型安全・開発効率◎★npmエコシステム豊富LLM連携Hugging Face Inference API★無料枠利用可★モデル選択柔軟★簡単fetch呼び出しインフラCloudflare Workers + KV + Cron Triggers★無料プラン完結★サーバーレスでスケール容易★デプロイ簡単可視化React + D3.js (or SVG/Canvas)★リアルタイム更新対応★コンポーネント化しやすいCI/CDGitHub Actions★無料枠でLint/Test/Deploy自動化ドキュメントMarkdown + Mermaid.js★GitHub上で可読性高いアーキ図
+
+5. アーキテクチャ図 (簡易版)
+
+flowchart LR
+  subgraph Frontend
+    F[React
+     +D3.js]
+  end
+  subgraph Cloudflare
+    W[Workers (HTTP API)] --&gt; KV[Workers KV]
+    W --&gt; Cron[Cron Triggers]
+  end
+  subgraph LLM
+    HF[Hugging Face
+     Inference API]
+  end
+  F -- getState --&gt; W
+  F -- sendCommand --&gt; W
+  W -- read/write --&gt; KV
+  W -- call --&gt; HF
+
+  詳細フェーズ計画書
+
+以下は、先ほどの要件定義を受け、実装を進めるフェーズ1〜8の詳細タスクと成果物をまとめたものです。
+
+フェーズ1：LLM単一エージェント呼び出し
+
+
+
+タスク:
+Agent クラス実装（id、memory プロパティ）
+Hugging Face Inference API 呼び出しラッパー作成
+プロンプト設計: システム／ユーザーメッセージ定義
+テストスクリプトで1体のみ挙動確認
+
+成果物: agent.ts（API呼び出し×1）、単体テスト
+
+フェーズ2：複数エージェント並列実行
+
+
+
+タスク:
+Promise.all による 5〜10体並列呼び出し実装
+レート制限対応 (遅延 or バッチサイズ制御)
+ロギング機能追加 (console/logstash)
+
+成果物: simulation.ts（複数同時ステップ実行）、ログサンプル
+
+フェーズ3：記憶蓄積・トークン節約
+
+
+
+タスク:
+メモリ構造見直し (過去履歴の最大トークン数設定)
+要約機能追加: 長期メモリは簡易文字列要約
+テストでトークン数計測 (モデル応答との比較)
+
+成果物: memoryManager.ts、要約ロジックとベンチマーク報告
+
+フェーズ4：クリエイティブプロンプト強化
+
+
+
+タスク:
+システムメッセージで性格タグ追加
+長期目標／趣味プロンプト例5種作成
+各バリエーション実行結果比較レポート
+
+成果物: prompts/creativePrompts.json、比較ログ
+
+フェーズ5：ハイブリッド判断エンジン
+
+
+
+タスク:
+ルールベース判断モジュール (ruleEngine.ts) 実装
+LLM判断と切替する DecisionManager 実装
+ユニットテスト／結合テスト
+
+成果物: ruleEngine.ts、decisionManager.ts、テスト結果
+
+フェーズ6：コスト最適化＆省トークン化
+
+
+
+タスク:
+プロンプト内変数埋め込み＆ clamp() 利用
+モデル選択自動切替 (軽量モデル⇔高品質モデル)
+コスト試算スクリプト実装
+
+成果物: costOptimizer.ts、コスト試算レポート
+
+フェーズ7：リアルタイム可視化ダッシュボード
+
+
+
+タスク:
+React プロジェクト初期化 (Create React App / Vite)
+D3.js または Canvas でエージェント位置・行動可視化
+WebSocket / SSE 連携実装
+UI／UX 調整 (レスポンシブ対応、アクセシビリティ基礎)
+
+成果物: frontend/ フォルダ、ライブページURL
+
+フェーズ8：運用監視とドキュメント化
+
+
+
+タスク:
+Cloudflare Analytics API 連携ダッシュボード
+README でアーキ図・コスト試算表・拡張案記載
+GitHub Actions で CI/CD (Lint / Test / Deploy)
+
+成果物: docs/ フォルダ (README, http://ARCHITECTURE.md), .github/workflows/ 設定
+
+
+
