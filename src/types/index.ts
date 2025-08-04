@@ -195,9 +195,17 @@ export interface SavedAgentData {
   pendingProposals: Proposal[];
 }
 
+export interface SavedZombieData {
+  id: number;
+  x: number;
+  y: number;
+  health: number;
+  targetAgentId: number | null;
+}
+
 export interface SavedSimulationState {
   agents: SavedAgentData[]; // Use SavedAgentData for serialization
-  zombies: IZombie[]; // Add zombies to saved state
+  zombies: SavedZombieData[]; // Add zombies to saved state
   currentStep: number;
   llmProvider: LLMConfig['provider'];
 }

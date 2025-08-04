@@ -19,5 +19,7 @@ export function isSavedSimulationState(obj: unknown): obj is SavedSimulationStat
     return false;
   }
 
-  return true;
+  if (!('zombies' in state) || !Array.isArray(state.zombies) || !state.zombies.every(z => typeof z === 'object' && z !== null && 'id' in z && typeof z.id === 'number' && 'x' in z && typeof z.x === 'number' && 'y' in z && typeof z.y === 'number' && 'health' in z && typeof z.health === 'number' && 'targetAgentId' in z && (typeof z.targetAgentId === 'number' || z.targetAgentId === null))) {
+    return false;
+  }
 }
