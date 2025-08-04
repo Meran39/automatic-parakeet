@@ -376,7 +376,7 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({
       }, simulationSpeedRef.current);
     }
 
-  }, [agents, locations, llmService, decisionManager, addLog, currentStepRef, handleMoveAction, handleWaitAction, handleScavengeAction, handleGiveItemAction, handleProposeAction, handleRespondToAction, handleAttackAction, setZombies, setAttackEffects, zombieSpawnCounter, nextZombieSpawnStep, handleSendMessageAction, zombies]);
+  }, [agents, locations, llmService, decisionManager, addLog, currentStepRef, handleMoveAction, handleWaitAction, handleScavengeAction, handleGiveItemAction, handleProposeAction, handleRespondToAction, handleAttackAction, setZombies, zombieSpawnCounter, nextZombieSpawnStep, handleSendMessageAction, zombies]);
 
   const runSimulationStepRef = useRef(runSimulationStep);
 

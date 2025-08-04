@@ -125,8 +125,8 @@ export class DecisionManager {
 
     const attackActionExample: string =
       nearbyZombies.length > 0
-        ? `- **ゾンビを攻撃**: 近くにいるゾンビを攻撃する。例: '{\"action\": \"ゾンビを攻撃\", \"targetId\": ${nearbyZombies[0]?.id}}'`
-        : `- **ゾンビを攻撃**: 近くにいるゾンビを攻撃する。例: '{\"action\": \"ゾンビを攻撃\", \"targetId\": 1}'`; // 近くにゾンビがいない場合でも例を示す
+        ? `- **ゾンビを攻撃**: 近くにいるゾンビを攻撃する。例: '{"action": "ゾンビを攻撃", "targetId": ${nearbyZombies[0]?.id}}'`
+        : `- **ゾンビを攻撃**: 近くにいるゾンビを攻撃する。例: '{"action": "ゾンビを攻撃", "targetId": 1}'`; // 近くにゾンビがいない場合でも例を示す
 
     const pendingProposalsInfo = agent.pendingProposals.length > 0
       ? `\n# 受信した提案\n${agent.pendingProposals.map(p => `- ID: ${p.id}, 送信者: ${agents.find(a => a.id === p.senderId)?.name}, タイプ: ${p.type}, 内容: ${p.content}`).join('\n')}`
@@ -172,13 +172,13 @@ ${pendingProposalsInfo}
 
 # 行動の選択肢
 ${attackActionExample}
-- **移動**: 指定した場所に移動する。例: '{\"action\": \"移動\", \"targetLocation\": \"公園\"}'
-- **物資を調達する**: 現在地で食料やアイテムを探す。例: '{\"action\": \"物資を調達する\"}'
-- **待機**: エネルギーを回復するために少し休む。例: '{\"action\": \"待機\"}'
-- **メッセージを送信**: 他のエージェントにメッセージを送信する。例: '{\"action\": \"メッセージを送信\", \"recipientName\": \"Bob\", \"messageContent\": \"一緒に食料を探さないか？\"}'
-- **アイテムを渡す**: 他のエージェントにインベントリ内のアイテムを渡す。例: '{\"action\": \"アイテムを渡す\", \"recipientName\": \"Alice\", \"itemName\": \"パン\"}'
-- **提案する**: 他のエージェントに共同行動を提案する。例: '{\"action\": \"提案する\", \"proposalType\": \"共同探索\", \"proposalRecipientName\": \"Bob\", \"proposalContent\": \"スーパーマーケットを探索しないか？\"}'
-- **提案に応答する**: 受信した提案に対して承諾または拒否する。例: '{\"action\": \"提案に応答する\", \"proposalId\": \"提案のID\", \"proposalResponse\": \"accept\"}'
+- **移動**: 指定した場所に移動する。例: '{"action": "移動", "targetLocation": "公園"}'
+- **物資を調達する**: 現在地で食料やアイテムを探す。例: '{"action": "物資を調達する"}'
+- **待機**: エネルギーを回復するために少し休む。例: '{"action": "待機"}'
+- **メッセージを送信**: 他のエージェントにメッセージを送信する。例: '{"action": "メッセージを送信", "recipientName": "Bob", "messageContent": "一緒に食料を探さないか？"}'
+- **アイテムを渡す**: 他のエージェントにインベントリ内のアイテムを渡す。例: '{"action": "アイテムを渡す", "recipientName": "Alice", "itemName": "パン"}'
+- **提案する**: 他のエージェントに共同行動を提案する。例: '{"action": "提案する", "proposalType": "共同探索", "proposalRecipientName": "Bob", "proposalContent": "スーパーマーケットを探索しないか？"}'
+- **提案に応答する**: 受信した提案に対して承諾または拒否する。例: '{"action": "提案に応答する", "proposalId": "提案のID", "proposalResponse": "accept"}'
 
 # あなたの行動 (JSON形式のみで回答)
 /*

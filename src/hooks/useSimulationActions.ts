@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Agent } from '../models/Agent';
-import { NamedLocation, ItemType, Proposal, ProposalType, AttackEffect, SimulationLog, ActionResponse } from '../types';
+import { NamedLocation, ItemType, Proposal, ProposalType, SimulationLog, ActionResponse } from '../types';
 import { Zombie } from '../models/Zombie';
 
 interface UseSimulationActionsProps {
@@ -160,7 +160,7 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     } else {
       addLog('error', `${agent.name}が攻撃しようとしたゾンビ(ID: ${response.targetId})が見つからないか、武器を装備していません。`, agent.id);
     }
-  }, [zombies, addLog, setZombies]);
+  }, [zombies, addLog]);
 
   const handleSendMessageAction = useCallback((agent: Agent, response: ActionResponse) => {
     const recipient = agents.find(a => a.name === response.recipientName);

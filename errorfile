@@ -1,0 +1,33 @@
+Annotations
+10 errors and 3 warnings
+build-and-test: src/services/decisionManager.ts#L128
+Unnecessary escape character: \"
+build-and-test: src/services/decisionManager.ts#L128
+Unnecessary escape character: \"
+build-and-test: src/services/decisionManager.ts#L128
+Unnecessary escape character: \"
+build-and-test: src/services/decisionManager.ts#L128
+Unnecessary escape character: \"
+build-and-test: src/services/decisionManager.ts#L128
+Unnecessary escape character: \"
+build-and-test: src/main.tsx#L33
+Unexpected any. Specify a different type
+build-and-test: src/main.tsx#L31
+Unexpected any. Specify a different type
+build-and-test: src/main.tsx#L23
+Unexpected any. Specify a different type
+build-and-test: src/main.tsx#L21
+Unexpected any. Specify a different type
+build-and-test: src/hooks/useSimulationActions.ts#L3
+'AttackEffect' is defined but never used
+build-and-test: src/hooks/useSimulationActions.ts#L144
+React Hook useCallback has an unnecessary dependency: 'setZombies'. Either exclude it or remove the dependency array
+build-and-test: src/context/SimulationContext.tsx#L493
+Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components
+build-and-test: src/context/SimulationContext.tsx#L379
+React Hook useCallback has an unnecessary dependency: 'setAttackEffects'. Either exclude it or remove the dependency array
+
+Annotations
+1 error
+build-and-deploy
+Action failed with "The process '/usr/bin/git' failed with exit code 128"
