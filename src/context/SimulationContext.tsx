@@ -428,7 +428,8 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({
         initialHappiness,
         initialHunger,
         '',
-        initialWeapon
+        initialWeapon,
+        addLog // addLogを渡す
       );
       const location = locations.find(l => l.name === initialLocationName);
       if (location) {
@@ -453,6 +454,8 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({
     setLlmProvider,
     addLog,
     initialLocations,
+    zombies,
+    setZombies,
   });
 
   const value = {

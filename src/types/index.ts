@@ -197,6 +197,7 @@ export interface SavedAgentData {
 
 export interface SavedSimulationState {
   agents: SavedAgentData[]; // Use SavedAgentData for serialization
+  zombies: any[]; // Add zombies to saved state
   currentStep: number;
   llmProvider: LLMConfig['provider'];
 }

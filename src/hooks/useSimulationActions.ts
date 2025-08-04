@@ -12,7 +12,7 @@ interface UseSimulationActionsProps {
   setAttackEffects: React.Dispatch<React.SetStateAction<AttackEffect[]>>;
 }
 
-export const useSimulationActions = ({ agents, locations, zombies, addLog }: UseSimulationActionsProps) => {
+export const useSimulationActions = ({ agents, locations, zombies, addLog, setZombies, setAttackEffects }: UseSimulationActionsProps) => {
 
   const handleMoveAction = useCallback((agent: Agent, response: any) => {
     const targetLocationName = response.targetLocation;
@@ -166,7 +166,7 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog }: Use
   const handleSendMessageAction = useCallback((agent: Agent, response: any) => {
     const recipient = agents.find(a => a.name === response.recipientName);
     if (recipient && response.messageContent) {
-      addLog('dialogue', `${agent.name} -> ${recipient.name}: 「${response.messageContent}」`, agent.id);
+      addLog('info', `${agent.name} -> ${recipient.name}: 「${response.messageContent}」`, agent.id);
     } else {
       addLog('error', `${agent.name}がメッセージを送信しようとしましたが、宛先または内容が不明です。`, agent.id);
     }

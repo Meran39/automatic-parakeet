@@ -1,3 +1,4 @@
+import { Zombie } from '../models/Zombie';
 import { useCallback } from 'react';
 import { Agent } from '../models/Agent';
 import { SavedSimulationState, LLMConfig, NamedLocation, SimulationLog } from '../types';
@@ -12,6 +13,8 @@ interface UseSimulationPersistenceProps {
   setLlmProvider: React.Dispatch<React.SetStateAction<LLMConfig['provider']>>;
   addLog: (type: SimulationLog['type'], message: string, agentId?: number) => void;
   initialLocations: NamedLocation[];
+  zombies: Zombie[];
+  setZombies: React.Dispatch<React.SetStateAction<Zombie[]>>;
 }
 
 export const useSimulationPersistence = ({
@@ -23,6 +26,8 @@ export const useSimulationPersistence = ({
   setLlmProvider,
   addLog,
   initialLocations,
+  zombies,
+  setZombies,
 }: UseSimulationPersistenceProps) => {
   const saveSimulation = useCallback(() => {
     const stateToSave: SavedSimulationState = {
@@ -53,12 +58,19 @@ export const useSimulationPersistence = ({
         targetLocationName: agent.targetLocationName,
         pendingProposals: agent.pendingProposals,
       })),
+      zombies: zombies.map(zombie => ({
+        id: zombie.id,
+        x: zombie.x,
+        y: zombie.y,
+        health: zombie.health,
+        targetAgentId: zombie.targetAgentId,
+      })),
       currentStep,
       llmProvider,
     };
     localStorage.setItem('simulationState', JSON.stringify(stateToSave));
     addLog('system', 'シミュレーション状態を保存しました。');
-  }, [agents, currentStep, llmProvider, addLog]);
+  }, [agents, zombies, currentStep, llmProvider, addLog]);
 
   const loadSimulation = useCallback(() => {
     const savedState = localStorage.getItem('simulationState');
@@ -79,7 +91,8 @@ export const useSimulationPersistence = ({
             agentData.happiness ?? 50,
             agentData.hunger ?? 50,
             agentData.shortTermPlan ?? '',
-            agentData.weapon ?? null
+            agentData.weapon ?? null,
+            addLog
           );
           // その他の状態を復元
           agent.x = agentData.x ?? 0;
@@ -105,6 +118,21 @@ export const useSimulationPersistence = ({
           return agent;
         });
         setAgents(loadedAgents);
+
+        if (state.zombies) {
+          const loadedZombies = state.zombies.map(zombieData => {
+            const zombie = new Zombie(
+              zombieData.id,
+              zombieData.x,
+              zombieData.y,
+              zombieData.health
+            );
+            zombie.targetAgentId = zombieData.targetAgentId;
+            return zombie;
+          });
+          setZombies(loadedZombies);
+        }
+
         setCurrentStep(state.currentStep ?? 0);
         setLlmProvider((state.llmProvider as LLMConfig['provider']) ?? 'ollama');
       }
@@ -113,7 +141,7 @@ export const useSimulationPersistence = ({
     } else {
       addLog('system', '保存されたシミュレーション状態が見つかりませんでした。');
     }
-  }, [addLog, initialLocations, setAgents, setCurrentStep, setLlmProvider]);
+  }, [addLog, initialLocations, setAgents, setCurrentStep, setLlmProvider, setZombies]);
 
   return { saveSimulation, loadSimulation };
 };
