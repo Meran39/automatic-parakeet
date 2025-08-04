@@ -1,9 +1,7 @@
 Annotations
-2 errors
+1 error
 build-and-deploy
-Process completed with exit code 2.
-build-and-deploy: src/hooks/useSimulationPersistence.ts#L61
-Type '{ id: number; x: number; y: number; health: number; targetAgentId: number; }[]' is not assignable to type 'IZombie[]'.
+Action failed with "The process '/usr/bin/git' failed with exit code 128"
 
 Annotations
 1 error and 3 warnings
