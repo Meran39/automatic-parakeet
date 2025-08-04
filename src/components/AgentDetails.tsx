@@ -1,98 +1,81 @@
-// ===============================
-// src/components/AgentDetails.tsx
-// ===============================
+import React from 'react';
 import { Agent } from '../models/Agent';
-import { MoodType } from '../types';
-import { User, Zap, Smile, Target, Activity } from 'lucide-react';
 
-interface Props {
+interface AgentDetailsProps {
   agent: Agent | null;
-  allAgents: Agent[]; // 追加
+  allAgents: Agent[];
 }
 
-const AgentDetails: React.FC<Props> = ({ agent, allAgents }) => {
-  const getMoodDisplay = (mood: MoodType): string => {
-    switch (mood) {
-      case 'happy': return '😊 幸せ';
-      case 'excited': return '🤩 興奮';
-      case 'neutral': return '😐 普通';
-      case 'thoughtful': return '🤔 思考中';
-      case 'content': return '😌 満足';
-      case 'tired': return '😴 疲労';
-      case 'social': return '🥳 社交的';
-      case 'creative': return '💡 創造的';
-      default: return '❓ 不明';
-    }
-  };
+// プログレスバーコンポーネント
+const ProgressBar: React.FC<{ label: string; value: number; color: string }> = ({ label, value, color }) => (
+  <div className="flex items-center space-x-2">
+    <span className="font-semibold text-sm w-24 flex-shrink-0">{label}:</span>
+    <div className="w-full bg-neutral-200 rounded-full h-2.5">
+      <div
+        className={`h-2.5 rounded-full ${color}`}
+        style={{ width: `${value}%` }}
+      ></div>
+    </div>
+    <span className="text-sm w-8 text-right flex-shrink-0">{value.toFixed(0)}</span>
+  </div>
+);
 
+const AgentDetails: React.FC<AgentDetailsProps> = ({ agent, allAgents }) => {
   if (!agent) {
-    return <div className="bg-gray-800 p-4 rounded-lg">エージェントを選択してください</div>;
+    return <div className="p-4 bg-neutral-100 rounded-lg">エージェントを選択してください</div>;
   }
 
-  return (
-    <div className="bg-neutral-900 p-8 rounded-xl shadow-custom-medium text-neutral-100">
-      <h2 className="text-3xl font-bold mb-4 text-primary-300">{agent.name}</h2>
-      <div className="space-y-3 text-lg">
-        <div className="flex items-center gap-2">
-          <User size={20} className="text-primary-300" />
-          <p><strong>個性:</strong> {agent.personality}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Activity size={20} className="text-primary-300" />
-          <p><strong>現在の行動:</strong> {agent.state.currentAction}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Zap size={20} className="text-primary-300" />
-          <p><strong>エネルギー:</strong> {agent.state.energy}%</p>
-        </div>
-        <div className="w-full bg-neutral-700 rounded-full h-2.5">
-          <div 
-            className="bg-accent-400 h-2.5 rounded-full transition-all duration-500" 
-            style={{ width: `${agent.state.energy}%` }}
-          ></div>
-        </div>
-        <div className="flex items-center gap-2 mt-2">
-          <Activity size={20} className="text-primary-300" />
-          <p><strong>空腹度:</strong> {agent.state.hunger}%</p>
-        </div>
-        <div className="w-full bg-neutral-700 rounded-full h-2.5">
-          <div 
-            className="bg-red-400 h-2.5 rounded-full transition-all duration-500" 
-            style={{ width: `${agent.state.hunger}%` }}
-          ></div>
-        </div>
-        <div className="flex items-center gap-2 mt-2">
-          <Smile size={20} className="text-primary-300" />
-          <p><strong>気分:</strong> {getMoodDisplay(agent.state.mood)}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Target size={20} className="text-primary-300" />
-          <p><strong>短期計画:</strong> {agent.state.shortTermPlan}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Target size={20} className="text-primary-300" />
-          <p><strong>長期目標:</strong> {agent.state.goals.join(', ') || 'なし'}</p>
-        </div>
-        
-      </div>
+  const getAgentNameById = (id: number) => {
+    const foundAgent = allAgents.find(a => a.id === id);
+    return foundAgent ? foundAgent.name : '不明';
+  };
 
-      <h3 className="text-xl font-bold mt-6 text-primary-300 flex items-center gap-2">
-        <User size={20} className="text-primary-300" />
-        人間関係
-      </h3>
-      <div className="space-y-2 mt-2">
-        {Object.keys(agent.relationships).length === 0 ? (
-          <p className="text-neutral-400">他のエージェントとの関係性はありません。</p>
-        ) : (
-          Object.entries(agent.relationships).map(([agentId, strength]) => {
-            const relatedAgent = allAgents.find(a => a.id.toString() === agentId);
-            return (
-              <div key={agentId} className="flex items-center gap-2">
-                <p className="text-neutral-300">{relatedAgent ? relatedAgent.name : `エージェント ${agentId}`}: <span className="font-bold">{strength}</span></p>
-              </div>
-            );
-          })
-        )}
+  return (
+    <div className="bg-neutral-50 shadow-custom-medium rounded-lg p-4 space-y-4">
+      <h3 className="text-lg font-bold text-primary-600">{agent.name} (ID: {agent.id})</h3>
+      <div className="grid grid-cols-2 gap-2 text-sm">
+        <p><span className="font-semibold">個性:</span> {agent.personality}</p>
+        <p><span className="font-semibold">現在の場所:</span> {agent.currentLocationName}</p>
+        <p><span className="font-semibold">所持金:</span> {agent.money}G</p>
+        <p><span className="font-semibold">職業:</span> {agent.job ? agent.job.name : 'なし'}</p>
+        <p><span className="font-semibold">武器:</span> {agent.weapon ? agent.weapon.name : 'なし'}</p>
+      </div>
+      <div className="space-y-2">
+        <ProgressBar label="エネルギー" value={agent.energy} color="bg-green-500" />
+        <ProgressBar label="幸福度" value={agent.happiness} color="bg-yellow-500" />
+        <ProgressBar label="空腹度" value={agent.hunger} color="bg-red-500" />
+      </div>
+      <div>
+        <h4 className="font-semibold text-primary-500">短期計画:</h4>
+        <p className="text-sm bg-neutral-50 p-2 rounded">{agent.shortTermPlan}</p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-primary-500">記憶の要約:</h4>
+        <p className="text-sm bg-neutral-50 p-2 rounded h-24 overflow-y-auto">{agent.memoryManager.getMemoryContext()}</p>
+      </div>
+      <div>
+        <h4 className="font-semibold text-primary-500">人間関係:</h4>
+        <ul className="text-sm list-disc list-inside">
+          {Object.entries(agent.relationships).map(([agentId, strength]) => (
+            <li key={agentId}>{getAgentNameById(parseInt(agentId))}: {strength}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h4 className="font-semibold text-primary-500">インベントリ:</h4>
+        <ul className="text-sm list-disc list-inside">
+          {Object.entries(agent.inventory).map(([item, quantity]) => (
+            <li key={item}>{item}: {quantity}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h4 className="font-semibold text-primary-500">受信メッセージ:</h4>
+        <ul className="text-sm list-disc list-inside h-24 overflow-y-auto">
+          {agent.receivedMessages.map((msg, index) => (
+            <li key={index}>From {getAgentNameById(msg.senderId)}: {msg.content}</li>
+          ))}
+        </ul>
       </div>
     </div>
   );

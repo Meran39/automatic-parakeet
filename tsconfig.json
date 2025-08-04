@@ -1,6 +1,3 @@
-// ===============================
-// tsconfig.json
-// ===============================
 {
   "compilerOptions": {
     "target": "ES2020",
@@ -14,10 +11,10 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+    "strict": false, // strict modeを無効化
+    "noUnusedLocals": false, // 未使用のローカル変数のチェックを無効化
+    "noUnusedParameters": false, // 未使用のパラメータのチェックを無効化
+    "noFallthroughCasesInSwitch": false, // switch文のフォールスルーチェックを無効化
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]

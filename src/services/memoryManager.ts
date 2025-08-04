@@ -21,7 +21,7 @@ export class MemoryManager {
     }
 
     const historyToSummarize = this.actionHistory.map(h => `[ステップ${h.step}] ${h.timestamp}: ${h.action}`).join('\n');
-    const summary = await llmService.summarizeText(historyToSummarize);
+    const summary = await llmService.generate(historyToSummarize);
     this.summarizedMemories.push(summary);
     this.actionHistory = []; // 要約したら履歴をクリア
     console.log('Memories summarized:', summary);
@@ -44,7 +44,7 @@ export class MemoryManager {
     const prompt = `現在の状況:\n${currentContext}\n\n以下の過去の記憶の中から、現在の状況に最も関連性の高いものを抽出してください。\n\n${allMemories.join('\n')}\n\n関連する記憶:`;
 
     try {
-      const relevantMemory = await llmService.summarizeText(prompt);
+      const relevantMemory = await llmService.generate(prompt);
       return relevantMemory;
     } catch (error) {
       console.error('Failed to retrieve relevant memories:', error);

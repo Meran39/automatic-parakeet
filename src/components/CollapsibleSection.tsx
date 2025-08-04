@@ -7,31 +7,19 @@ interface CollapsibleSectionProps {
   initialOpen?: boolean;
 }
 
-const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
-  title,
-  children,
-  initialOpen = true,
-}) => {
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children, initialOpen = true }) => {
   const [isOpen, setIsOpen] = useState(initialOpen);
 
-  const toggleOpen = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
-    <div className="bg-white rounded-xl shadow-custom-medium border border-neutral-100 w-full">
-      <div
-        className="flex justify-between items-center p-4 cursor-pointer"
-        onClick={toggleOpen}
+    <div className="bg-neutral-50 rounded-xl shadow-custom-medium p-4 border border-neutral-100 w-full">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex justify-between items-center text-left font-bold text-primary-700"
       >
-        <h2 className="text-lg font-semibold text-neutral-800">{title}</h2>
-        {isOpen ? (
-          <ChevronUp className="w-5 h-5 text-neutral-600" />
-        ) : (
-          <ChevronDown className="w-5 h-5 text-neutral-600" />
-        )}
-      </div>
-      {isOpen && <div className="p-4 pt-0">{children}</div>}
+        <span>{title}</span>
+        {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+      </button>
+      {isOpen && <div className="mt-4 transition-all duration-300 ease-in-out overflow-hidden">{children}</div>}
     </div>
   );
 };
