@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Agent } from '../models/Agent';
-import { NamedLocation, ItemType, Proposal, ProposalType, AttackEffect, SimulationLog } from '../types';
+import { NamedLocation, ItemType, Proposal, ProposalType, AttackEffect, SimulationLog, ActionResponse } from '../types';
 import { Zombie } from '../models/Zombie';
 
 interface UseSimulationActionsProps {
@@ -9,12 +9,11 @@ interface UseSimulationActionsProps {
   zombies: Zombie[];
   addLog: (type: SimulationLog['type'], message: string, agentId?: number) => void;
   setZombies: React.Dispatch<React.SetStateAction<Zombie[]>>;
-  setAttackEffects: React.Dispatch<React.SetStateAction<AttackEffect[]>>;
 }
 
-export const useSimulationActions = ({ agents, locations, zombies, addLog, setZombies, setAttackEffects }: UseSimulationActionsProps) => {
+export const useSimulationActions = ({ agents, locations, zombies, addLog, setZombies }: UseSimulationActionsProps) => {
 
-  const handleMoveAction = useCallback((agent: Agent, response: any) => {
+  const handleMoveAction = useCallback((agent: Agent, response: ActionResponse) => {
     const targetLocationName = response.targetLocation;
     const targetLocation = locations.find(l => l.name === targetLocationName);
     if (targetLocation) {
@@ -51,7 +50,7 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [locations, addLog]);
 
-  const handleGiveItemAction = useCallback((agent: Agent, response: any) => {
+  const handleGiveItemAction = useCallback((agent: Agent, response: ActionResponse) => {
     const recipientAgent = agents.find(a => a.name === response.recipientName);
     const itemName = response.itemName as ItemType;
 
@@ -68,7 +67,7 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [agents, addLog]);
 
-  const handleProposeAction = useCallback((agent: Agent, response: any) => {
+  const handleProposeAction = useCallback((agent: Agent, response: ActionResponse) => {
     const recipientAgent = agents.find(a => a.name === response.proposalRecipientName);
     if (recipientAgent && response.proposalType && response.proposalContent) {
       const newProposal: Proposal = {
@@ -87,7 +86,7 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [agents, addLog]);
 
-  const handleRespondToAction = useCallback((agent: Agent, response: any) => {
+  const handleRespondToAction = useCallback((agent: Agent, response: ActionResponse) => {
     const proposalId = response.proposalId;
     const proposalResponse = response.proposalResponse;
     const targetProposal = agent.pendingProposals.find(p => p.id === proposalId);
@@ -142,9 +141,9 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     } else {
       addLog('error', `${agent.name}は不明な提案に応答しようとした。`, agent.id);
     }
-  }, [agents, locations, zombies, addLog]);
+  }, [agents, locations, zombies, addLog, setZombies]);
 
-  const handleAttackAction = useCallback((agent: Agent, response: any) => {
+  const handleAttackAction = useCallback((agent: Agent, response: ActionResponse) => {
     const targetZombie = zombies.find(z => z.id === response.targetId);
     if (targetZombie && agent.weapon) {
       const damage = agent.attack(targetZombie);
@@ -161,9 +160,9 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     } else {
       addLog('error', `${agent.name}が攻撃しようとしたゾンビ(ID: ${response.targetId})が見つからないか、武器を装備していません。`, agent.id);
     }
-  }, [zombies, addLog]);
+  }, [zombies, addLog, setZombies]);
 
-  const handleSendMessageAction = useCallback((agent: Agent, response: any) => {
+  const handleSendMessageAction = useCallback((agent: Agent, response: ActionResponse) => {
     const recipient = agents.find(a => a.name === response.recipientName);
     if (recipient && response.messageContent) {
       addLog('info', `${agent.name} -> ${recipient.name}: 「${response.messageContent}」`, agent.id);

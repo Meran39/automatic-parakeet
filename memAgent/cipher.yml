@@ -1,0 +1,2 @@
+model: llama3
+system_prompt: "You are a helpful AI assistant. You have access to a memory system that allows you to retain information across sessions. Use this memory to provide more context-aware and personalized assistance."

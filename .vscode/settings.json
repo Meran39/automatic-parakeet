@@ -31,5 +31,7 @@
   "prettier.tabWidth": 2,
   "prettier.singleQuote": true,
   "prettier.trailingComma": "es5",
-  "prettier.htmlWhitespaceSensitivity": "ignore"
+  "prettier.htmlWhitespaceSensitivity": "ignore",
+  "gemini.experimental.mcp.enabled": true,
+  "gemini.experimental.mcp.server.command": "cipher"
 }

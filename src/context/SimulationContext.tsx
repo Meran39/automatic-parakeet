@@ -178,7 +178,6 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({
     zombies,
     addLog,
     setZombies,
-    setAttackEffects,
   });
 
   const runSimulationStep = useCallback(async () => {
@@ -209,11 +208,11 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({
       }
 
       // 強制攻撃ロジック
-      let performedForcedAttack = false;
-      const nearbyAttackableZombies = zombies.filter(zombie => {
-        const distance = Math.sqrt(Math.pow(agent.x - zombie.x, 2) + Math.pow(agent.y - zombie.y, 2));
-        return agent.weapon && distance <= agent.weapon.range;
-      });
+      const performedForcedAttack = false;
+      // const nearbyAttackableZombies = zombies.filter(zombie => {
+      //   const distance = Math.sqrt(Math.pow(agent.x - zombie.x, 2) + Math.pow(agent.y - zombie.y, 2));
+      //   return agent.weapon && distance <= agent.weapon.range;
+      // });
 
       if (performedForcedAttack) {
         console.log(`${agent.name} performed forced attack.`);
@@ -334,7 +333,7 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({
       });
 
       return zombiesToProcess.map(zombie => {
-        let closestAgent: Agent = null as any; // TypeScriptにAgent型であることを伝えるための仮の代入
+        let closestAgent: Agent | null = null; // TypeScriptにAgent型であることを伝えるための仮の代入
         let minDistance = Infinity;
 
         for (const agent of agents) {
@@ -377,7 +376,7 @@ export const SimulationProvider: React.FC<SimulationProviderProps> = ({
       }, simulationSpeedRef.current);
     }
 
-  }, [agents, locations, llmService, decisionManager, addLog, currentStepRef, handleMoveAction, handleWaitAction, handleScavengeAction, handleGiveItemAction, handleProposeAction, handleRespondToAction, handleAttackAction, setZombies, setAttackEffects, zombieSpawnCounter, nextZombieSpawnStep, handleSendMessageAction]);
+  }, [agents, locations, llmService, decisionManager, addLog, currentStepRef, handleMoveAction, handleWaitAction, handleScavengeAction, handleGiveItemAction, handleProposeAction, handleRespondToAction, handleAttackAction, setZombies, setAttackEffects, zombieSpawnCounter, nextZombieSpawnStep, handleSendMessageAction, zombies]);
 
   const runSimulationStepRef = useRef(runSimulationStep);
 
