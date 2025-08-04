@@ -102,6 +102,9 @@ export class DecisionManager {
       .join('\n');
 
     const nearbyZombies = zombies.filter((zombie) => {
+      // 生存しているゾンビのみを対象とする
+      if (zombie.health <= 0) return false;
+
       const distance = Math.sqrt(Math.pow(agent.x - zombie.x, 2) + Math.pow(agent.y - zombie.y, 2));
       // 武器を持っている場合、その射程距離 + 20 を索敵範囲とする
       if (agent.weapon) {
@@ -114,7 +117,7 @@ export class DecisionManager {
     const nearbyZombiesInfo = nearbyZombies
       .map(
         (zombie) =>
-          `近くのゾンビ (ID: ${zombie.id}): 場所=(${zombie.x.toFixed(2)}, ${zombie.y.toFixed(2)}), 体力=${zombie.health}`
+          `近くのゾンビ (ID: ${zombie.id}): 場所=(${zombie.x.toFixed(2)}, ${zombie.y.toFixed(2)}), 体力=${zombie.health.toFixed(2)}, 距離=${Math.sqrt(Math.pow(agent.x - zombie.x, 2) + Math.pow(agent.y - zombie.y, 2)).toFixed(2)}`
       )
       .join('\n');
 
@@ -125,8 +128,8 @@ export class DecisionManager {
 
     const attackActionExample: string =
       nearbyZombies.length > 0
-        ? `- **ゾンビを攻撃**: 近くにいるゾンビを攻撃する。例: '{"action": "ゾンビを攻撃", "targetId": ${nearbyZombies[0]?.id}}'`
-        : `- **ゾンビを攻撃**: 近くにいるゾンビを攻撃する。例: '{"action": "ゾンビを攻撃", "targetId": 1}'`; // 近くにゾンビがいない場合でも例を示す
+        ? `- **ゾンビを攻撃**: 近くにいる生存しているゾンビを、武器の射程圏内で攻撃する。例: '{\"action\": \"ゾンビを攻撃\", \"targetId\": ${nearbyZombies[0]?.id}}'`
+        : `- **ゾンビを攻撃**: 近くにいる生存しているゾンビを、武器の射程圏内で攻撃する。例: '{\"action\": \"ゾンビを攻撃\", \"targetId\": 1}'`; // 近くにゾンビがいない場合でも例を示す
 
     const pendingProposalsInfo = agent.pendingProposals.length > 0
       ? `\n# 受信した提案\n${agent.pendingProposals.map(p => `- ID: ${p.id}, 送信者: ${agents.find(a => a.id === p.senderId)?.name}, タイプ: ${p.type}, 内容: ${p.content}`).join('\n')}`
@@ -140,7 +143,7 @@ export class DecisionManager {
 **重要: 必ず日本語で思考し、回答してください。**
 
 **思考のヒント:**
-- **生存が最優先**です。**近くにゾンビがいる場合、最優先で攻撃を検討してください。**
+- **生存が最優先**です。**近くにゾンビがいる場合、最優先で攻撃を検討してください。その際、必ず武器の射程圏内にいる生存しているゾンビのみを攻撃対象としてください。**
 - 他のエージェント情報の**「(危険！)」**表示は、その仲間がゾンビに襲われていることを意味します。射程圏内にいるなら援護も検討してください。
 - **恐怖心**が高い時は、安全な場所へ移動したり、隠れたりすることを優先してください。
 - **空腹度**や**幸福度**も重要です。これらの欲求を満たす行動も忘れないでください。

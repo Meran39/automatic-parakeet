@@ -141,26 +141,43 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     } else {
       addLog('error', `${agent.name}は不明な提案に応答しようとした。`, agent.id);
     }
-  }, [agents, locations, zombies, addLog, setZombies]);
+  }, [agents, locations, zombies, addLog]);
 
   const handleAttackAction = useCallback((agent: Agent, response: ActionResponse) => {
     const targetZombie = zombies.find(z => z.id === response.targetId);
-    if (targetZombie && agent.weapon) {
-      const damage = agent.attack(targetZombie);
-      if (damage > 0) {
-        targetZombie.health -= damage;
-        addLog('action', `${agent.name}がゾンビ(ID: ${targetZombie.id})に${damage}のダメージを与えた！ 残り体力: ${targetZombie.health}`, agent.id);
-        if (targetZombie.health <= 0) {
-          addLog('system', `ゾンビ(ID: ${targetZombie.id})は倒された！`, agent.id);
-          setZombies(prevZombies => prevZombies.filter(z => z.id !== targetZombie.id)); // ゾンビをリストから削除
-        }
-      } else {
-        addLog('info', `${agent.name}はゾンビ(ID: ${targetZombie.id})を攻撃したが、射程圏外だったか武器がなかった。`, agent.id);
+
+    // ゾンビが存在しない、またはすでに死亡している場合は攻撃しない
+    if (!targetZombie || targetZombie.health <= 0) {
+      addLog('info', `${agent.name}が攻撃しようとしたゾンビ(ID: ${response.targetId})は存在しないか、すでに倒されています。`, agent.id);
+      return;
+    }
+
+    // 武器を装備していない場合は攻撃できない
+    if (!agent.weapon) {
+      addLog('info', `${agent.name}は武器を装備していないため、攻撃できません。`, agent.id);
+      return;
+    }
+
+    // 武器の射程距離内にゾンビがいるか確認
+    const distance = Math.sqrt(Math.pow(agent.x - targetZombie.x, 2) + Math.pow(agent.y - targetZombie.y, 2));
+    if (distance > agent.weapon.range) {
+      addLog('info', `${agent.name}はゾンビ(ID: ${targetZombie.id})を攻撃しようとしましたが、射程圏外です。`, agent.id);
+      return;
+    }
+
+    const damage = agent.attack(targetZombie);
+    if (damage > 0) {
+      targetZombie.health -= damage;
+      addLog('action', `${agent.name}がゾンビ(ID: ${targetZombie.id})に${damage}のダメージを与えた！ 残り体力: ${targetZombie.health.toFixed(2)}`, agent.id);
+      if (targetZombie.health <= 0) {
+        addLog('system', `ゾンビ(ID: ${targetZombie.id})は倒された！`, agent.id);
+        setZombies(prevZombies => prevZombies.filter(z => z.id !== targetZombie.id)); // ゾンビをリストから削除
       }
     } else {
-      addLog('error', `${agent.name}が攻撃しようとしたゾンビ(ID: ${response.targetId})が見つからないか、武器を装備していません。`, agent.id);
+      // ここには到達しないはずだが、念のため
+      addLog('error', `${agent.name}がゾンビ(ID: ${targetZombie.id})を攻撃できませんでした。`, agent.id);
     }
-  }, [zombies, addLog]);
+  }, [zombies, addLog, setZombies]);
 
   const handleSendMessageAction = useCallback((agent: Agent, response: ActionResponse) => {
     const recipient = agents.find(a => a.name === response.recipientName);
