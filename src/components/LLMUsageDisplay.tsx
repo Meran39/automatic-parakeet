@@ -1,24 +1,29 @@
 
 import React from 'react';
 import { useSimulationContext } from '../context/SimulationContext';
+import LLMUsageChart from './LLMUsageChart'; // LLMUsageChartが使用されている場合
 
-const LLMUsageDisplay: React.FC = React.memo(() => {
-  const { llmService } = useSimulationContext();
+const LLMUsageDisplay: React.FC = () => {
+  const { llmService, llmStats } = useSimulationContext(); // llmStats を追加で取得
 
-  const totalTokensUsed = llmService?.totalTokensUsed || 0;
-  const totalCost = llmService?.totalCost || 0;
+  // llmService が null の場合を考慮
+  const totalTokensUsed = llmStats.totalTokens;
+  const totalCost = llmStats.totalCost;
+  const averageResponseTime = llmStats.avgResponseTime; // 平均応答時間を取得
 
   return (
     <div className="bg-neutral-50 shadow-custom-medium rounded-lg p-4 space-y-2">
-      <h4 className="text-md font-semibold text-primary-600 mb-2">LLM 使用統計</h4>
-      <p className="text-sm text-neutral-600">
-        総トークン数: <span className="font-mono text-neutral-800">{totalTokensUsed}</span>
-      </p>
-      <p className="text-sm text-neutral-600">
-        総コスト: <span className="font-mono text-neutral-800">${totalCost.toFixed(6)}</span>
-      </p>
+      <h3 className="text-lg font-bold text-primary-600">LLM 使用状況</h3>
+      <div className="text-sm text-neutral-600">
+        <p>総トークン数: {totalTokensUsed}</p>
+        <p>総コスト: ${totalCost.toFixed(6)}</p>
+        {/* 平均応答時間を追加 */}
+        <p>平均応答時間: {averageResponseTime.toFixed(2)}ms</p>
+      </div>
+      {/* 必要であれば、LLMUsageChart もここに含める */}
+      {/* <LLMUsageChart /> */}
     </div>
   );
-});
+};
 
 export default LLMUsageDisplay;

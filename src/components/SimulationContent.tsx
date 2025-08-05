@@ -11,8 +11,8 @@ const SimulationContent: React.FC = () => {
   const { selectedAgent, agents } = useSimulationContext();
 
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-neutral-50 font-sans text-neutral-900">
-      <div className="w-full md:w-1/3 p-4 space-y-4 overflow-y-auto bg-neutral-50 shadow-lg flex flex-col space-y-4">
+    <div className="flex flex-col md:flex-row md:h-screen bg-neutral-50 font-sans text-neutral-900">
+      <div className="w-full md:w-1/3 p-4 overflow-y-auto bg-neutral-50 shadow-lg flex flex-col space-y-4">
         <h1 className="text-2xl font-bold text-primary-700">仮想世界シミュレーション</h1>
         <CollapsibleSection title="シミュレーション制御">
           <ControlPanel />

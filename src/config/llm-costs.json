@@ -1,4 +1,10 @@
 {
+  "ollama": {
+    "llama3": {
+      "input_cost_per_1k_tokens": 0,
+      "output_cost_per_1k_tokens": 0
+    }
+  },
   "huggingface": {
     "microsoft/DialoGPT-medium": {
       "input_cost_per_1k_tokens": 0.001,

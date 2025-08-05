@@ -30,7 +30,8 @@ export class DecisionManager {
     zombies: IZombie[]
   ): Promise<ActionResponse> {
     const prompt = this.createPrompt(agent, step, locations, agents, zombies);
-    const responseText = await this.llmService.generate(prompt);
+    const { completion: responseText, responseTime } = await this.llmService.generate(prompt);
+    console.log(`LLM Response Time: ${responseTime}ms`); // 応答時間をログに出力
     try {
       const jsonString = this.extractJson(responseText);
       const response = JSON.parse(jsonString);

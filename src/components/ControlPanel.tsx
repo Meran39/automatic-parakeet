@@ -50,7 +50,7 @@ const ControlPanel: React.FC = () => {
 
   return (
     <div className="bg-neutral-50 shadow-custom-medium rounded-lg p-4 space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-lg font-bold text-primary-600">シミュレーション制御</h3>
         <div className="flex items-center space-x-2">
           <button onClick={toggleRunning} disabled={isProcessing} className={`p-2 rounded-full ${isRunning ? 'bg-secondary-400 hover:bg-secondary-500' : 'bg-primary-500 hover:bg-primary-600'} text-white`}>
@@ -101,7 +101,7 @@ const ControlPanel: React.FC = () => {
 
       <div className="pt-4 border-t border-neutral-200">
         <h4 className="text-md font-semibold text-primary-600 mb-2">新しいエージェントを追加</h4>
-        <div className="grid grid-cols-2 gap-2 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
           <input type="text" placeholder="名前" value={name} onChange={(e) => setName(e.target.value)} className="p-2 border border-neutral-300 rounded-md focus:ring-primary-500 focus:border-primary-500" />
           <input type="text" placeholder="個性" value={personality} onChange={(e) => setPersonality(e.target.value)} className="p-2 border border-neutral-300 rounded-md focus:ring-primary-500 focus:border-primary-500" />
           <select value={initialLocationName} onChange={(e) => setInitialLocationName(e.target.value)} className="p-2 border border-neutral-300 rounded-md focus:ring-primary-500 focus:border-primary-500">

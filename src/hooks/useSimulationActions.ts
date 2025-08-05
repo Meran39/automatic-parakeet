@@ -3,6 +3,9 @@ import { Agent } from '../models/Agent';
 import { NamedLocation, ItemType, Proposal, ProposalType, SimulationLog, ActionResponse } from '../types';
 import { Zombie } from '../models/Zombie';
 
+/**
+ * useSimulationActionsフックに渡すプロパティの型定義。
+ */
 interface UseSimulationActionsProps {
   agents: Agent[];
   locations: NamedLocation[];
@@ -11,8 +14,18 @@ interface UseSimulationActionsProps {
   setZombies: React.Dispatch<React.SetStateAction<Zombie[]>>;
 }
 
+/**
+ * シミュレーションにおけるエージェントの各種アクションを処理するロジックをまとめたカスタムフック。
+ * @param {UseSimulationActionsProps} props - アクションの処理に必要な状態とセッター関数。
+ * @returns 各アクションを処理する関数のオブジェクト。
+ */
 export const useSimulationActions = ({ agents, locations, zombies, addLog, setZombies }: UseSimulationActionsProps) => {
 
+  /**
+   * エージェントの「移動」アクションを処理する。
+   * @param agent - 行動主体エージェント。
+   * @param response - LLMからの行動応答。目標ロケーションが含まれる。
+   */
   const handleMoveAction = useCallback((agent: Agent, response: ActionResponse) => {
     const targetLocationName = response.targetLocation;
     const targetLocation = locations.find(l => l.name === targetLocationName);
@@ -24,11 +37,20 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [locations, addLog]);
 
+  /**
+   * エージェントの「待機」アクションを処理する。エネルギーが少し回復する。
+   * @param agent - 行動主体エージェント。
+   */
   const handleWaitAction = useCallback((agent: Agent) => {
     agent.adjustEnergy(5); // エネルギーを少し回復
     addLog('action', `${agent.name}は休息してエネルギーを回復した。`, agent.id);
   }, [addLog]);
 
+  /**
+   * エージェントの「物資を調達する」アクションを処理する。
+   * 現在のロケーションでリソースを見つけ、インベントリに追加する。
+   * @param agent - 行動主体エージェント。
+   */
   const handleScavengeAction = useCallback((agent: Agent) => {
     const currentLocation = locations.find(loc => loc.name === agent.currentLocationName);
     if (currentLocation && currentLocation.resources) {
@@ -50,7 +72,12 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [locations, addLog]);
 
-  const handleGiveItemAction = useCallback((agent: Agent, response: ActionResponse) => {
+  /**
+   * エージェントの「アイテムを渡す」アクションを処理する。
+   * @param agent - 行動主体エージェント。
+   * @param response - LLMからの行動応答。受取人とアイテム名が含まれる。
+   */
+   const handleGiveItemAction = useCallback((agent: Agent, response: ActionResponse) => {
     const recipientAgent = agents.find(a => a.name === response.recipientName);
     const itemName = response.itemName as ItemType;
 
@@ -67,6 +94,12 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [agents, addLog]);
 
+  /**
+   * エージェントの「提案する」アクションを処理する。
+   * 他のエージェントに共同行動などを提案する。
+   * @param agent - 行動主体エージェント。
+   * @param response - LLMからの行動応答。提案の受取人、種類、内容が含まれる。
+   */
   const handleProposeAction = useCallback((agent: Agent, response: ActionResponse) => {
     const recipientAgent = agents.find(a => a.name === response.proposalRecipientName);
     if (recipientAgent && response.proposalType && response.proposalContent) {
@@ -86,6 +119,12 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [agents, addLog]);
 
+  /**
+   * エージェントの「提案に応答する」アクションを処理する。
+   * 保留中の提案に対して承諾または拒否で応答する。
+   * @param agent - 行動主体エージェント。
+   * @param response - LLMからの行動応答。提案IDと応答（accept/reject）が含まれる。
+   */
   const handleRespondToAction = useCallback((agent: Agent, response: ActionResponse) => {
     const proposalId = response.proposalId;
     const proposalResponse = response.proposalResponse;
@@ -143,6 +182,12 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [agents, locations, zombies, addLog]);
 
+  /**
+   * エージェントの「ゾンビを攻撃」アクションを処理する。
+   * 射程内のターゲットゾンビにダメージを与える。
+   * @param agent - 行動主体エージェント。
+   * @param response - LLMからの行動応答。ターゲットのIDが含まれる。
+   */
   const handleAttackAction = useCallback((agent: Agent, response: ActionResponse) => {
     const targetZombie = zombies.find(z => z.id === response.targetId);
 
@@ -179,6 +224,11 @@ export const useSimulationActions = ({ agents, locations, zombies, addLog, setZo
     }
   }, [zombies, addLog, setZombies]);
 
+  /**
+   * エージェントの「メッセージを送信」アクションを処理する。
+   * @param agent - 行動主体エージェント。
+   * @param response - LLMからの行動応答。受取人とメッセージ内容が含まれる。
+   */
   const handleSendMessageAction = useCallback((agent: Agent, response: ActionResponse) => {
     const recipient = agents.find(a => a.name === response.recipientName);
     if (recipient && response.messageContent) {

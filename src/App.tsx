@@ -3,6 +3,10 @@ import { SimulationProvider } from './context/SimulationContext';
 import SimulationContent from './components/SimulationContent';
 import { NamedLocation } from './types';
 
+/**
+ * シミュレーションで使用される場所（ロケーション）の初期設定。
+ * 各ロケーションは名前、座標、タイプ、リソース情報などを持ちます。
+ */
 const LOCATIONS: NamedLocation[] = [
   { name: '自宅', x: 100, y: 100, type: 'home', width: 50, height: 50, resources: {
     '水': { chance: 0.8, maxQuantity: 5 },
@@ -28,6 +32,12 @@ const LOCATIONS: NamedLocation[] = [
   } },
 ];
 
+/**
+ * アプリケーションのルートコンポーネント。
+ * `SimulationProvider` を通じて、シミュレーション全体のコンテキストを提供し、
+ * `SimulationContent` コンポーネントをレンダリングします。
+ * @returns React要素
+ */
 const App: React.FC = () => {
   return (
     <SimulationProvider initialLocations={LOCATIONS}>

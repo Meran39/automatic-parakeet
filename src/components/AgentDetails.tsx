@@ -33,7 +33,7 @@ const AgentDetails: React.FC<AgentDetailsProps> = ({ agent, allAgents }) => {
   return (
     <div className="bg-neutral-50 shadow-custom-medium rounded-lg p-4 space-y-4">
       <h3 className="text-lg font-bold text-primary-600">{agent.name} (ID: {agent.id})</h3>
-      <div className="grid grid-cols-2 gap-2 text-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
         <p><span className="font-semibold">個性:</span> {agent.personality}</p>
         <p><span className="font-semibold">現在の場所:</span> {agent.currentLocationName}</p>
         <p><span className="font-semibold">所持金:</span> {agent.money}G</p>
